@@ -39,6 +39,8 @@ services:
       dockerfile: ./docker/Dockerfile.nginx
     depends_on:
       - auth
+    profiles:
+      - auth
   auth:
     networks:
       - lamenu
@@ -56,6 +58,8 @@ services:
     depends_on:
       - auth-db
       - redis
+    profiles:
+      - auth
   auth-db:
     networks:
       - lamenu
@@ -67,6 +71,24 @@ services:
       POSTGRES_PASSWORD: '2309'
     volumes:
       - pg_data:/var/lib/postgresql/data
+    profiles:
+      - auth
+
+  payment:
+    networks:
+      - lamenu
+    build:
+      context: ./services/payment
+      dockerfile: ./Dockerfile
+    restart: always
+    environment:
+      - JWT_KEY=${JWT_KEY}
+    volumes:
+      - ./services/payment:/code
+      - pycache:/var/cache/pycache
+    profiles:
+      - payment
+
   redis:
     networks:
       - lamenu
