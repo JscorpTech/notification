@@ -7,16 +7,35 @@ volumes:
   pycache: null
 
 services:
-  auth-nginx:
+  traefik:
+    image: traefik:v2.10
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+      - "--providers.docker.exposedbydefault=false"
+    ports:
+      - "80:80"
+      - "8080:8080" # Dashboard uchun
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
     networks:
       - lamenu
-    ports:
-      - ${PORT:-8001}:80
+  auth-nginx:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.auth.rule=PathPrefix(`/auth`)"
+      - "traefik.http.routers.auth.entrypoints=web"
+      - "traefik.http.services.auth.loadbalancer.server.port=80"
+      - "traefik.http.middlewares.auth-strip-prefix.stripPrefix.prefixes=/auth"
+      - "traefik.http.routers.auth.middlewares=auth-strip-prefix"
+    networks:
+      - lamenu
     volumes:
-      - ./auth/resources/layout/nginx.conf:/etc/nginx/nginx.conf
-      - ./auth/resources/:/usr/share/nginx/html/resources/
+      - ./services/auth/resources/layout/nginx.conf:/etc/nginx/nginx.conf
+      - ./services/auth/resources/:/usr/share/nginx/html/resources/
     build:
-      context: ./auth
+      context: ./services/auth
       dockerfile: ./docker/Dockerfile.nginx
     depends_on:
       - auth
@@ -24,14 +43,15 @@ services:
     networks:
       - lamenu
     build:
-      context: ./auth
+      context: ./services/auth
       dockerfile: ./docker/Dockerfile.web
     restart: always
     command: ${AUTH_COMMAND:-sh ./resources/scripts/entrypoint.sh}
     environment:
       - PYTHONPYCACHEPREFIX=/var/cache/pycache
+      - JWT_KEY=${JWT_KEY}
     volumes:
-      - ./auth:/code
+      - ./services/auth:/code
       - pycache:/var/cache/pycache
     depends_on:
       - auth-db

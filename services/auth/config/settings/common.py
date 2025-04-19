@@ -109,7 +109,7 @@ AUTH_PASSWORD_VALIDATORS = [
 TIME_ZONE = "Asia/Tashkent"
 USE_I18N = True
 USE_TZ = True
-STATIC_URL = "resources/static/"
+STATIC_URL = "/auth/resources/static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Date formats
@@ -140,7 +140,7 @@ LOCALE_PATHS = [os.path.join(BASE_DIR, "resources/locale")]
 LANGUAGE_CODE = "uz"
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "resources/media")  # Media files
-MEDIA_URL = "/resources/media/"
+MEDIA_URL = "/auth/resources/media/"
 
 AUTH_USER_MODEL = "accounts.User"
 
@@ -151,9 +151,6 @@ ALLOWED_HOSTS += env("ALLOWED_HOSTS").split(",")
 CSRF_TRUSTED_ORIGINS = env("CSRF_TRUSTED_ORIGINS").split(",")
 SILKY_AUTHORISATION = True
 SILKY_PYTHON_PROFILER = True
-
-
-
 
 JST_LANGUAGES = [
     {
