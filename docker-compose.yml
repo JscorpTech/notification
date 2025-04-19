@@ -75,6 +75,11 @@ services:
       - auth
 
   payment:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.payment.rule=PathPrefix(`/payment`)"
+      - "traefik.http.routers.payment.entrypoints=web"
+      - "traefik.http.services.payment.loadbalancer.server.port=8000"
     networks:
       - lamenu
     build:

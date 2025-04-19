@@ -3,10 +3,8 @@ up-auth:
 
 down-auth:
 	docker compose --profile auth down
-
 up-payment:
 	docker compose --profile payment up -d
-
 down-payment:
 	docker compose --profile payment down
 
