@@ -1,0 +1,54 @@
+networks:
+  lamenu:
+    driver: bridge
+
+volumes:
+  pg_data: null
+  pycache: null
+
+services:
+  auth-nginx:
+    networks:
+      - lamenu
+    ports:
+      - ${PORT:-8001}:80
+    volumes:
+      - ./auth/resources/layout/nginx.conf:/etc/nginx/nginx.conf
+      - ./auth/resources/:/usr/share/nginx/html/resources/
+    build:
+      context: ./auth
+      dockerfile: ./docker/Dockerfile.nginx
+    depends_on:
+      - auth
+  auth:
+    networks:
+      - lamenu
+    build:
+      context: ./auth
+      dockerfile: ./docker/Dockerfile.web
+    restart: always
+    command: ${AUTH_COMMAND:-sh ./resources/scripts/entrypoint.sh}
+    environment:
+      - PYTHONPYCACHEPREFIX=/var/cache/pycache
+    volumes:
+      - ./auth:/code
+      - pycache:/var/cache/pycache
+    depends_on:
+      - auth-db
+      - redis
+  auth-db:
+    networks:
+      - lamenu
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_DB: django
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: '2309'
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+  redis:
+    networks:
+      - lamenu
+    restart: always
+    image: redis
