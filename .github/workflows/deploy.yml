@@ -1,0 +1,24 @@
+name: Auto Deploy to Self-Hosted
+
+on:
+  push:
+    branches:
+      - prod
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: 🔄 Kodni olish
+        uses: actions/checkout@v3
+
+      - name: 📥 Secret orqali .env fayl yaratish
+        run: |
+          echo "${{ secrets.BASE_ENV_FILE }}" > .env
+          echo "${{ secrets.AUTH_ENV_FILE }}" > ./auth/.env
+
+      - name: 🛠 Docker Compose bilan build & deploy
+        run: |
+          docker compose down
+          docker compose up -d --build
