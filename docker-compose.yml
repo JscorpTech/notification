@@ -32,10 +32,10 @@ services:
     networks:
       - lamenu
     volumes:
-      - ./services/auth/resources/layout/nginx.conf:/etc/nginx/nginx.conf
-      - ./services/auth/resources/:/usr/share/nginx/html/resources/
+      - ./auth/resources/layout/nginx.conf:/etc/nginx/nginx.conf
+      - ./auth/resources/:/usr/share/nginx/html/resources/
     build:
-      context: ./services/auth
+      context: ./auth
       dockerfile: ./docker/Dockerfile.nginx
     depends_on:
       - auth
@@ -45,7 +45,7 @@ services:
     networks:
       - lamenu
     build:
-      context: ./services/auth
+      context: ./auth
       dockerfile: ./docker/Dockerfile.web
     restart: always
     command: ${AUTH_COMMAND:-sh ./resources/scripts/entrypoint.sh}
@@ -53,7 +53,7 @@ services:
       - PYTHONPYCACHEPREFIX=/var/cache/pycache
       - JWT_KEY=${JWT_KEY}
     volumes:
-      - ./services/auth:/code
+      - ./auth:/code
       - pycache:/var/cache/pycache
     depends_on:
       - auth-db
@@ -78,13 +78,13 @@ services:
     networks:
       - lamenu
     build:
-      context: ./services/payment
+      context: ./payment
       dockerfile: ./Dockerfile
     restart: always
     environment:
       - JWT_KEY=${JWT_KEY}
     volumes:
-      - ./services/payment:/code
+      - ./payment:/code
       - pycache:/var/cache/pycache
     profiles:
       - payment
