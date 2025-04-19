@@ -15,7 +15,7 @@ services:
       - "--entrypoints.web.address=:80"
       - "--providers.docker.exposedbydefault=false"
     ports:
-      - "80:80"
+      - "${PORT-84}:80"
       - "8080:8080" # Dashboard uchun
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
