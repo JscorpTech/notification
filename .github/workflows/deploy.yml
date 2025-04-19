@@ -21,4 +21,4 @@ jobs:
       - name: 🛠 Docker Compose bilan build & deploy
         run: |
           docker compose down
-          docker compose up -d --build
+          docker compose --profile auth --profile payment up -d --build
