@@ -1,11 +1,7 @@
 from config.env import env
 
 APPS = [
-    
     "cacheops",
-    
-    
-    
     "drf_spectacular",
     "rest_framework",
     "corsheaders",

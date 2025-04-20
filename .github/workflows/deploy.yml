@@ -16,9 +16,10 @@ jobs:
       - name: 📥 Secret orqali .env fayl yaratish
         run: |
           echo "${{ secrets.BASE_ENV_FILE }}" > .env
-          echo "${{ secrets.AUTH_ENV_FILE }}" > ./auth/.env
+          echo "${{ secrets.USER_ENV_FILE }}" > ./user/.env
 
       - name: 🛠 Docker Compose bilan build & deploy
         run: |
+          docker compose --profile user --profile payment build
           docker compose down
-          docker compose --profile auth --profile payment up -d --build
+          docker compose --profile user --profile payment up -d

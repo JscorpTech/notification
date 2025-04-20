@@ -1,5 +1,5 @@
 networks:
-  auth:
+  user:
     driver: bridge
 
 volumes:
@@ -10,7 +10,7 @@ volumes:
 services:
   nginx:
     networks:
-      - auth
+      - user
     ports:
       - ${PORT:-8001}:80
     volumes:
@@ -23,7 +23,7 @@ services:
       - web
   web:
     networks:
-      - auth
+      - user
     build:
       context: .
       dockerfile: ./docker/Dockerfile.web
@@ -39,7 +39,7 @@ services:
       - redis
   db:
     networks:
-      - auth
+      - user
     image: postgres:16
     restart: always
     environment:
@@ -50,6 +50,6 @@ services:
       - pg_data:/var/lib/postgresql/data
   redis:
     networks:
-      - auth
+      - user
     restart: always
     image: redis
