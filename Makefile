@@ -7,4 +7,4 @@ up-payment:
 down-payment:
 	docker compose --profile payment down
 down-all:
-	docker compose --profile payment --profile user down
+	docker compose --profile payment --profile user --profile notification down

@@ -5,6 +5,7 @@ networks:
 volumes:
   pg_data: null
   pycache: null
+  rabbitmq-data: null
 
 services:
   traefik:
@@ -94,8 +95,29 @@ services:
     profiles:
       - payment
 
+  notification:
+    build:
+      context: ./notification
+      dockerfile: Dockerfile
+    networks:
+      - lamenu
+    profiles:
+      - notification
+
   redis:
     networks:
       - lamenu
     restart: always
     image: redis
+
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672" # RabbitMQ porti
+      - "15672:15672" # Web konsol porti
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest # Foydalanuvchi nomi
+      - RABBITMQ_DEFAULT_PASS=guest # Parol
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq # Ma'lumotlarni saqlash
