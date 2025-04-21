@@ -1,0 +1,53 @@
+networks:
+  lamenu:
+    external: true
+
+volumes:
+  pg_data: null
+  pycache: null
+
+services:
+  order-nginx:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.order.rule=PathPrefix(`/order`)"
+      - "traefik.http.routers.order.entrypoints=web"
+      - "traefik.http.services.order.loadbalancer.server.port=80"
+      # - "traefik.http.middlewares.order-strip-prefix.stripPrefix.prefixes=/order"
+      # - "traefik.http.routers.order.middlewares=order-strip-prefix"
+    networks:
+      - lamenu
+    volumes:
+      - ./resources/layout/nginx.conf:/etc/nginx/nginx.conf
+      - ./resources/:/usr/share/nginx/html/resources/
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.nginx
+    depends_on:
+      - order
+  order:
+    networks:
+      - lamenu
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.web
+    restart: always
+    command: ${COMMAND:-sh ./entrypoint.sh}
+    environment:
+      - PYTHONPYCACHEPREFIX=/var/cache/pycache
+    volumes:
+      - .:/code
+      - pycache:/var/cache/pycache
+    depends_on:
+      - order-db
+  order-db:
+    networks:
+      - lamenu
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_DB: django
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: '2309'
+    volumes:
+      - pg_data:/var/lib/postgresql/data

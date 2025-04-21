@@ -1,18 +1,22 @@
 networks:
-  user:
-    driver: bridge
+  lamenu:
+    external: true
 
 volumes:
   pg_data: null
-  rabbitmq: null
   pycache: null
 
 services:
-  nginx:
+  user-nginx:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.user.rule=PathPrefix(`/user`)"
+      - "traefik.http.routers.user.entrypoints=web"
+      - "traefik.http.services.user.loadbalancer.server.port=80"
+      - "traefik.http.middlewares.user-strip-prefix.stripPrefix.prefixes=/user"
+      - "traefik.http.routers.user.middlewares=user-strip-prefix"
     networks:
-      - user
-    ports:
-      - ${PORT:-8001}:80
+      - lamenu
     volumes:
       - ./resources/layout/nginx.conf:/etc/nginx/nginx.conf
       - ./resources/:/usr/share/nginx/html/resources/
@@ -20,10 +24,10 @@ services:
       context: .
       dockerfile: ./docker/Dockerfile.nginx
     depends_on:
-      - web
-  web:
-    networks:
       - user
+  user:
+    networks:
+      - lamenu
     build:
       context: .
       dockerfile: ./docker/Dockerfile.web
@@ -35,11 +39,10 @@ services:
       - .:/code
       - pycache:/var/cache/pycache
     depends_on:
-      - db
-      - redis
-  db:
+      - user-db
+  user-db:
     networks:
-      - user
+      - lamenu
     image: postgres:16
     restart: always
     environment:
@@ -48,8 +51,3 @@ services:
       POSTGRES_PASSWORD: '2309'
     volumes:
       - pg_data:/var/lib/postgresql/data
-  redis:
-    networks:
-      - user
-    restart: always
-    image: redis
