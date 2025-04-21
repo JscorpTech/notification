@@ -1,44 +1,12 @@
 networks:
   lamenu:
+    external: true
     name: lamenu
-    driver: bridge
-
-volumes:
-  pg_data: null
-  pycache: null
-  rabbitmq-data: null
 
 services:
-  traefik:
-    image: traefik:v2.10
-    command:
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--entrypoints.web.address=:80"
-      - "--providers.docker.exposedbydefault=false"
-    ports:
-      - "${PORT-84}:80"
-      - "8080:8080" # Dashboard uchun
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+  notification:
+    build:
+      context: .
+      dockerfile: Dockerfile
     networks:
       - lamenu
-  redis:
-    networks:
-      - lamenu
-    restart: always
-    image: redis
-    ports:
-      - 6379:6379
-  rabbitmq:
-    image: rabbitmq:management
-    networks:
-      - lamenu
-    ports:
-      - "5672:5672" # RabbitMQ porti
-      - "15672:15672" # Web konsol porti
-    environment:
-      - RABBITMQ_DEFAULT_USER=guest # Foydalanuvchi nomi
-      - RABBITMQ_DEFAULT_PASS=guest # Parol
-    volumes:
-      - rabbitmq-data:/var/lib/rabbitmq # Ma'lumotlarni saqlash

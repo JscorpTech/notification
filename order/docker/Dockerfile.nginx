@@ -1,3 +1,0 @@
-FROM nginx:alpine
-
-COPY ./resources/layout/nginx.conf /etc/nginx/nginx.conf
