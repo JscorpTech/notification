@@ -1,0 +1,12 @@
+networks:
+  lamenu:
+    external: true
+    name: lamenu
+
+services:
+  notification:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - lamenu
