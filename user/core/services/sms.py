@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta
 
-from django_core import exceptions, models, tasks
+from django_core import exceptions, models
+from core.utils.notification import send_notification
+from config.env import env
 
 
 class SmsService:
@@ -28,7 +30,8 @@ class SmsService:
         )  # noqa
         sms_confirm.save()
 
-        tasks.SendConfirm.delay(phone, code)
+        # tasks.SendConfirm.delay(phone, code)
+        send_notification({'type': 'sms', 'message': env.str("SMS_TEMPLATE") % {"code": code}, "to": [phone]})
         return True
 
     @staticmethod

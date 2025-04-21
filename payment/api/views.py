@@ -4,4 +4,4 @@ from rest_framework.response import Response
 
 class HealthView(APIView):
     def get(self, *args, **kwargs):
-        return Response(data={"detail": "OK"})
+        return Response(data={"detail": "OK"}, status=200)

@@ -3,6 +3,9 @@ networks:
     external: true
     name: lamenu
 
+volumes:
+  pycache: null
+
 services:
   app:
     labels:
@@ -15,5 +18,9 @@ services:
     build:
       dockerfile: Dockerfile
       context: .
+    networks:
+      - lamenu
+    restart: always
     volumes:
       - ./:/code
+      - pycache:/var/cache/pycache
