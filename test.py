@@ -11,7 +11,7 @@ exchange = Exchange('notification', type='direct')
 producer = Producer(channel, exchange=exchange, routing_key="notification")
 
 # Xabar yuborish
-message = {'type': 'email', 'message': 'Hello, Workers!', "to": ["+998888112309", "+998943990509"]}
+message = {'type': 'sms', 'message': "classcom.uz sayti va mobil ilovasiga ro'yxatdan o'tishingingiz uchun tasdiqlash kodi: 1234", "to": ["+998888112309", "+998943990509"]}
 producer.publish(message)
 
 print("Message sent to all workers!")
