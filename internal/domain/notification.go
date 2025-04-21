@@ -7,6 +7,9 @@ type NotificationConsumerPort interface {
 	Handler(amqp.Delivery)
 }
 
+type SMSServicePort interface {
+	SendSMS(string, string) error
+}
 type NotifierPort interface {
 	SendMessage([]string, string)
 }

@@ -1,16 +1,25 @@
 package notifier
 
 import (
+	"context"
+
 	"github.com/JscorpTech/notification/internal/domain"
-	"github.com/k0kubun/pp/v3"
+	"github.com/JscorpTech/notification/internal/services"
 )
 
-type smsNotifier struct{}
+type smsNotifier struct {
+	SMSServie domain.SMSServicePort
+	Ctx       context.Context
+}
 
-func NewSmsNotifier() domain.NotifierPort {
-	return &smsNotifier{}
+func NewSmsNotifier(ctx context.Context) domain.NotifierPort {
+	return &smsNotifier{
+		SMSServie: services.NewEskizSMSService(ctx),
+	}
 }
 
 func (n *smsNotifier) SendMessage(to []string, body string) {
-	pp.Print(to, body)
+	for _, user := range to {
+		n.SMSServie.SendSMS(user, body)
+	}
 }

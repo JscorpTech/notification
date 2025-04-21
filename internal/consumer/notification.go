@@ -1,6 +1,7 @@
 package consumer
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -11,10 +12,14 @@ import (
 	"github.com/streadway/amqp"
 )
 
-type notificationConsumer struct{}
+type notificationConsumer struct {
+	Ctx context.Context
+}
 
-func NewNotificationConsumer() domain.NotificationConsumerPort {
-	return &notificationConsumer{}
+func NewNotificationConsumer(ctx context.Context) domain.NotificationConsumerPort {
+	return &notificationConsumer{
+		Ctx: ctx,
+	}
 }
 
 func (n *notificationConsumer) Start() {
@@ -54,7 +59,7 @@ func (n *notificationConsumer) Handler(msg amqp.Delivery) {
 	var ntf domain.NotifierPort
 	switch notification.Type {
 	case "sms":
-		ntf = notifier.NewSmsNotifier()
+		ntf = notifier.NewSmsNotifier(n.Ctx)
 	case "email":
 		ntf = notifier.NewEmailNotifier()
 	}
