@@ -1,4 +1,4 @@
-FROM golang:alpine as build
+FROM golang:alpine AS build
 
 WORKDIR /app
 
@@ -15,5 +15,6 @@ FROM alpine
 WORKDIR /app
 
 COPY --from=build /app/notification .
+COPY ./.env /app/
 
 CMD ["./notification"]
