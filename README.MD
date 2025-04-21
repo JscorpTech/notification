@@ -43,7 +43,7 @@ go mod download
 
 3. Build the application:
 ```bash
-go build -o notification-service
+go build -o notification-service ./cmd/main.go
 ```
 
 ## Configuration
