@@ -99,8 +99,6 @@ services:
     build:
       context: ./notification
       dockerfile: Dockerfile
-    volumes:
-      - ./notification:/app
     networks:
       - lamenu
     profiles:
