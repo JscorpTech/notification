@@ -2,15 +2,19 @@ package notifier
 
 import (
 	"github.com/JscorpTech/notification/internal/domain"
-	"github.com/k0kubun/pp/v3"
+	"github.com/JscorpTech/notification/internal/services"
 )
 
-type emailNotifier struct{}
+type emailNotifier struct {
+	EmailService domain.EmailServicePort
+}
 
 func NewEmailNotifier() domain.NotifierPort {
-	return &emailNotifier{}
+	return &emailNotifier{
+		EmailService: services.NewEmailService(),
+	}
 }
 
 func (n *emailNotifier) SendMessage(to []string, body string) {
-	pp.Print(to, body)
+	n.EmailService.SendMail(to, []byte(body))
 }
