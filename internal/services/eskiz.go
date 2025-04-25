@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"log"
 	"net/http"
 	"os"
 	"time"
@@ -35,7 +36,7 @@ func (e *eskizSMSService) Request(payload any, path string, isAuth bool, retry b
 	req, err := http.NewRequest("POST", e.BaseURL+path, &buf)
 	req.Header.Add("Content-Type", "application/json")
 	if isAuth {
-		req.Header.Add("Authorization", "Bearer "+e.GetToken(true))
+		req.Header.Add("Authorization", "Bearer "+e.GetToken(true, true))
 	}
 
 	if err != nil {
@@ -43,24 +44,32 @@ func (e *eskizSMSService) Request(payload any, path string, isAuth bool, retry b
 	}
 	res, err := client.Do(req)
 	if res.StatusCode == http.StatusUnauthorized && retry {
+		time.Sleep(time.Second * 5)
 		pp.Print("Qayta urunish")
-		e.GetToken(false)
+		e.GetToken(false, false)
 		return e.Request(payload, path, isAuth, false)
 	}
 	return res, err
 }
 
-func (e *eskizSMSService) GetToken(cache bool) string {
+func (e *eskizSMSService) GetToken(cache bool, retry bool) string {
+	email := os.Getenv("ESKIZ_USER")
+	password := os.Getenv("ESKIZ_PASSWORD")
+
+	if email == "" || password == "" {
+		log.Fatal("password or fmail not found")
+	}
+
 	token, err := redis.RDB.Get(e.Ctx, "eskiz_token").Result()
 	if err == nil && cache {
 		pp.Print("Eskiz token topildi 😁")
 		return token
 	}
 	payload := domain.EskizLogin{
-		Email:    os.Getenv("ESKIZ_USER"),
-		Password: os.Getenv("ESKIZ_PASSWORD"),
+		Email:    email,
+		Password: password,
 	}
-	res, err := e.Request(payload, "/auth/login", false, true)
+	res, err := e.Request(payload, "/auth/login", false, retry)
 	if err != nil {
 		pp.Print(err.Error())
 	}
