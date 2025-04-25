@@ -27,7 +27,7 @@ r = redis.StrictRedis(host='127.0.0.1', port=6379, db=0)
 message = {
     'type': 'email',
     'message': "Subject: test\r\n\r\nclasscom.uz sayti va mobil ilovasiga ro'yxatdan o'tishingiz uchun tasdiqlash kodi: 1234",
-    'to': ["JscorpTech@gmail.com", "admin@jscorp.uz"]
+    'to': ["jahongirhakimjonov@gmail.com"]
 }
 
 # Xabarni JSON formatga o‘tkazib, Redis listga push qilish

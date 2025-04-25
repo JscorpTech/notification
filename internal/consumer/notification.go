@@ -48,5 +48,6 @@ func (n *notificationConsumer) Handler(notification domain.NotificationMsg) {
 	case "email":
 		ntf = notifier.NewEmailNotifier()
 	}
+	fmt.Println(notification.Message)
 	ntf.SendMessage(notification.To, notification.Message)
 }
