@@ -72,7 +72,7 @@ Notifications should be published to the RabbitMQ exchange with the following JS
 }
 ```
 
-Python example
+Python example rabbitmq broker
 ```python
 from kombu import Connection, Exchange, Producer
 
@@ -91,6 +91,28 @@ message = {'type': 'sms', 'message': "classcom.uz sayti va mobil ilovasiga ro'yx
 producer.publish(message)
 
 print("Message sent to all workers!")
+```
+
+Python example redis broker
+```python
+import redis
+import json
+
+# Redis ulanishi
+r = redis.StrictRedis(host='127.0.0.1', port=6379, db=0)
+
+# Xabar tayyorlash
+message = {
+    'type': 'email',
+    'message': "Subject: test\r\n\r\nclasscom.uz sayti va mobil ilovasiga ro'yxatdan o'tishingiz uchun tasdiqlash kodi: 1234",
+    'to': ["JscorpTech@gmail.com", "admin@jscorp.uz"]
+}
+
+# Xabarni JSON formatga o‘tkazib, Redis listga push qilish
+r.rpush('notification', json.dumps(message))
+
+print("Message pushed to Redis list!")
+
 ```
 
 Available notification types:

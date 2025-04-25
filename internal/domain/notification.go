@@ -1,10 +1,8 @@
 package domain
 
-import "github.com/streadway/amqp"
-
 type NotificationConsumerPort interface {
 	Start()
-	Handler(amqp.Delivery)
+	Handler(NotificationMsg)
 }
 
 type SMSServicePort interface {
