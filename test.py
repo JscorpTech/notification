@@ -22,11 +22,11 @@ import json
 
 # Redis ulanishi
 r = redis.StrictRedis(host='127.0.0.1', port=6379, db=0)
-
+# Subject: tasdiqlash ko'di\r\n\r\n
 # Xabar tayyorlash
 message = {
     'type': 'sms',
-    'message': "Assalomu alaykum %w{1,5} sizni https://classcom.uz o’qituvchining virtual kаbinetida muallif sifatida tasdiqlanganingiz bilan tabriklaymiz!!!",
+    'message': "Assalomu alaykum samandar sizni https://classcom.uz o’qituvchining virtual kаbinetida muallif sifatida tasdiqlanganingiz bilan tabriklaymiz!!!",
     'to': ["+998888112309"]
 }
 

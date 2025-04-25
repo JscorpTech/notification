@@ -1,0 +1,15 @@
+[Unit]
+Description="Notification service"
+After=network.target
+
+[Service]
+User=root
+Group=root
+Type=simple
+Restart=on-failure
+RestartSec=5s
+ExecStart=/home/user/projects/notification/main
+WorkingDirectory=/home/user/projects/notification
+
+[Install]
+WantedBy=multi-user.target
